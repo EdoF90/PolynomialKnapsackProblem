@@ -4,7 +4,7 @@ from gurobipy import *
 
 
 def solve_polynomial_knapsack(
-    gains, polynomial_gains,
+    gains, polynomial_gains, gamma,
     costs, budget, gap=None, time_limit=None, verbose=False
 ):
     n_items = len(costs)
@@ -26,17 +26,37 @@ def solve_polynomial_knapsack(
         vtype=GRB.BINARY,
         name='Z'
     )
+    Pi = model.addVars(
+        n_items,
+        lb=0,
+        vtype=GRB.CONTINUOUS,
+        name='Pi'
+    )
+    Rho = model.addVar(
+        lb=0,
+        vtype=GRB.CONTINUOUS,
+        name='Rho'
+    )
 
+    #OBJECTIVE FUNCTION
     obj_funct = quicksum(gains[i] * X[i] for i in items)
     for h, key in enumerate(polynomial_gains):
         obj_funct += polynomial_gains[key] * Z[h]
+    obj_funct -= (gamma*Rho + quicksum(Pi[i] for i in items))
+    
     model.setObjective(obj_funct, GRB.MAXIMIZE)
 
+    #CONSTRAINS
     model.addConstr(
-         quicksum(costs[i] * X[i] for i in items) <= budget,
+         quicksum(costs[i][0] * X[i] for i in items) + gamma*Rho + quicksum(Pi[i] for i in items) <= budget,
         "budget_limit"
     )
 
+    for i in items:
+        model.addConstr(
+            Rho + Pi[i] >= (costs[i][1]-costs[i][0]) * X[i],
+            "duality_{}".format(i)
+        )
 
     for h, key in enumerate(polynomial_gains):
         if polynomial_gains[key] > 0:
