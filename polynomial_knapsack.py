@@ -6,6 +6,7 @@ from solver.solve_polynomial_knapsack import solve_polynomial_knapsack
 
 
 if __name__ == '__main__':
+    
     log_name = "logs/polynomial_knapsack.log"
     logging.basicConfig(
         filename=log_name,
@@ -13,6 +14,8 @@ if __name__ == '__main__':
         level=logging.INFO, datefmt="%H:%M:%S",
         filemode='w'
     )
+
+    gamma = 2
     budget = 1
     n_obj = 5
 
@@ -21,7 +24,7 @@ if __name__ == '__main__':
         costs = np.random.uniform(0, 1, n_obj)
         gains = np.random.uniform(-1, 1, n_obj)
     else:
-        costs = np.array([0.6, 0.4, 0.3, 0.2, 0.1])
+        costs = np.array([(0.4,0.6), (0.4,0.8), (0.3,0.4), (0.2,0.6), (0.1,0.3)])
         gains = np.array([0.1, 0.1, 0.1, 0.1, 0.1])
 
     print(
@@ -42,6 +45,7 @@ if __name__ == '__main__':
     of, sol, comp_time = solve_polynomial_knapsack(
         gains,
         polynomial_gains,
+        gamma,
         costs,
         budget
     )
