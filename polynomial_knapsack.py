@@ -16,34 +16,41 @@ if __name__ == '__main__':
     )
 
     gamma = 2
-    budget = 1
-    n_obj = 5
-
+    budget = 15
+    n_obj = 4
+    """
     rnd = False
+    
     if rnd:
         costs = np.random.uniform(0, 1, n_obj)
-        gains = np.random.uniform(-1, 1, n_obj)
+        profits = np.random.uniform(-1, 1, n_obj)
     else:
-        costs = np.array([(0.4,0.6), (0.4,0.8), (0.3,0.4), (0.2,0.6), (0.1,0.3)])
-        gains = np.array([0.1, 0.1, 0.1, 0.1, 0.1])
+        """
+    costs = np.array([(5,7), (3,5), (4,5), (2,3.5)])
+    profits = np.array([9.5, 9.5, 7.5, 7.5])
 
     print(
         "costs: {}".format(costs)
     )
     print(
-        "gains: {}".format(gains)
+        "profits: {}".format(profits)
     )
     polynomial_gains = {
-        (1, 3): 0.1,
-        (1, 2, 3): 0.5,
-        (1, 2, 3, 4): -0.001
+        (0, 1): 1,
+        (0, 2): 2,
+        (0, 3):1.5,
+        (0, 1, 2, 3): 0.4,
+        (1, 2): 1.5,
+        (2, 3): 2.5,
+        (1, 3): 0.5,
+        (0, 1, 2): 0.9
     }
     print("polynomial_gains:\n {}".format(
         polynomial_gains)
     )
 
     of, sol, comp_time = solve_polynomial_knapsack(
-        gains,
+        profits,
         polynomial_gains,
         gamma,
         costs,

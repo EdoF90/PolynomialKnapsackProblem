@@ -4,7 +4,7 @@ from gurobipy import *
 
 
 def solve_polynomial_knapsack(
-    gains, polynomial_gains, gamma,
+    profits, polynomial_gains, gamma,
     costs, budget, gap=None, time_limit=None, verbose=False
 ):
     n_items = len(costs)
@@ -39,9 +39,11 @@ def solve_polynomial_knapsack(
     )
 
     #OBJECTIVE FUNCTION
-    obj_funct = quicksum(gains[i] * X[i] for i in items)
+    obj_funct = quicksum(profits[i] * X[i] for i in items)
     for h, key in enumerate(polynomial_gains):
+        #print('h:',h,' key:',key)
         obj_funct += polynomial_gains[key] * Z[h]
+    obj_funct -= quicksum(costs[i][0] * X[i] for i in items)
     obj_funct -= (gamma*Rho + quicksum(Pi[i] for i in items))
     
     model.setObjective(obj_funct, GRB.MAXIMIZE)
