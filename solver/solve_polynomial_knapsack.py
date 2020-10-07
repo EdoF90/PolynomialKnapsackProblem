@@ -2,14 +2,12 @@ import time
 import logging
 from gurobipy import *
 
-
 def solve_polynomial_knapsack(
-    profits, polynomial_gains, gamma,
-    costs, budget, gap=None, time_limit=None, verbose=False
+    dict_data, gap=None, time_limit=None, verbose=False
 ):
-    n_items = len(costs)
-    items = range(n_items)
-    n_hog = len(polynomial_gains)
+    n_items = len(dict_data['costs'])
+    items = range(dict_data['n_items'])
+    n_hog = len(dict_data['polynomial_gains'])
     hogs = range(n_hog)
 
     problem_name = "polynomial_knapsack"
@@ -39,32 +37,44 @@ def solve_polynomial_knapsack(
     )
 
     #OBJECTIVE FUNCTION
-    obj_funct = quicksum(profits[i] * X[i] for i in items)
-    for h, key in enumerate(polynomial_gains):
+    obj_funct = quicksum(dict_data['profits'][0][i] * X[i] for i in items)
+    for h, key in enumerate(dict_data['polynomial_gains']):
         #print('h:',h,' key:',key)
-        obj_funct += polynomial_gains[key] * Z[h]
-    obj_funct -= quicksum(costs[i][0] * X[i] for i in items)
-    obj_funct -= (gamma*Rho + quicksum(Pi[i] for i in items))
+        obj_funct += dict_data['polynomial_gains'][key] * Z[h]
+    obj_funct -= quicksum(dict_data['costs'][i][0] * X[i] for i in items)
+    obj_funct -= (dict_data['gamma']*Rho + quicksum(Pi[i] for i in items))
     
     model.setObjective(obj_funct, GRB.MAXIMIZE)
 
     #CONSTRAINS
     model.addConstr(
-         quicksum(costs[i][0] * X[i] for i in items) + gamma*Rho + quicksum(Pi[i] for i in items) <= budget,
+         quicksum(dict_data['costs'][i][0] * X[i] for i in items) + dict_data['gamma']*Rho + quicksum(Pi[i] for i in items) <= dict_data['budget'],
         "budget_limit"
     )
 
     for i in items:
         model.addConstr(
-            Rho + Pi[i] >= (costs[i][1]-costs[i][0]) * X[i],
+            Rho + Pi[i] >= (dict_data['costs'][i][1]-dict_data['costs'][i][0]) * X[i],
             "duality_{}".format(i)
         )
 
-    for h, key in enumerate(polynomial_gains):
-        if polynomial_gains[key] > 0:
-            model.addConstr(quicksum(X[i] for i in key) >= len(key) * Z[h], "hog {}".format(key))
+    for h, k in enumerate(dict_data['polynomial_gains']):
+        k=k.replace("(","").replace(")","").replace("'","").split(",")
+        key=[]
+        for i in k:
+            key.append(int(i))
+        key=tuple(key)
+        #print("",dict_data['polynomial_gains'][str(key)],"\n",key,"\n")
+        if dict_data['polynomial_gains'][str(key)] > 0:
+            model.addConstr(
+                quicksum(X[i] for i in key) >= len(key) * Z[h],
+                "hog {}".format(key)
+            )
         else:
-            model.addConstr(quicksum(X[i] for i in key) <= len(key) - 1 + Z[h], "hog {}".format(key))
+            model.addConstr(
+                quicksum(X[i] for i in key) <= len(key) - 1 + Z[h],
+                "hog {}".format(key)
+            )
 
     model.update()
     if gap:
