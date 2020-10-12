@@ -3,12 +3,17 @@ import logging
 from gurobipy import *
 
 def solve_polynomial_knapsack(
-    dict_data, gap=None, time_limit=None, verbose=False
+    dict_data, var_type, heuristic, indexes, gap=None, time_limit=None, verbose=False
 ):
     n_items = len(dict_data['costs'])
     items = range(dict_data['n_items'])
     n_hog = len(dict_data['polynomial_gains'])
     hogs = range(n_hog)
+    
+    if var_type == 'continuous':
+        var_type = GRB.CONTINUOUS
+    else:
+        var_type = GRB.BINARY
 
     problem_name = "polynomial_knapsack"
     logging.info("{}".format(problem_name))
@@ -16,12 +21,16 @@ def solve_polynomial_knapsack(
     model = Model(problem_name)
     X = model.addVars(
         n_items,
-        vtype=GRB.BINARY,
+        lb=0,
+        ub=1,
+        vtype=var_type,
         name='X'
     )
     Z = model.addVars(
         n_hog,
-        vtype=GRB.BINARY,
+        lb=0,
+        ub=1,
+        vtype=var_type,
         name='Z'
     )
     Pi = model.addVars(
@@ -75,6 +84,12 @@ def solve_polynomial_knapsack(
                 quicksum(X[i] for i in key) <= len(key) - 1 + Z[h],
                 "hog {}".format(key)
             )
+    if heuristic:
+        for i in indexes:
+            model.addConstr(
+                X[i] >= 1, "mathheur_constr{}".format(i)
+            )
+
 
     model.update()
     if gap:

@@ -52,7 +52,10 @@ if __name__ == '__main__':
         inst = Instance(sim_setting)
         dict_data = inst.get_data()
 
-        of, sol, comp_time = solve_polynomial_knapsack(dict_data)
+        var_type = 'binary'
+        heuristic = False
+        indexes = []
+        of, sol, comp_time = solve_polynomial_knapsack(dict_data, var_type, heuristic, indexes)
 
         #print("\nsolution: {}".format(sol))
         #print("objective function: {}".format(of))
@@ -82,4 +85,3 @@ if __name__ == '__main__':
         row += 1
 
     workbook.close()
-
