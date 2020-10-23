@@ -12,6 +12,7 @@ from copy import deepcopy
 import itertools
 import time as t
 from solver.solve_polynomial_knapsack import solve_polynomial_knapsack
+import concurrent.futures
 	
 
 class GAHeuristic(object):
@@ -23,18 +24,13 @@ class GAHeuristic(object):
 		self.solution = []
 		self.population = []
 
-
 	def fitnessScore(self, chromosome):
 		of = 0
 		investments = [i for i in range(0,len(chromosome)) if chromosome[i]=='1']
 		investments.sort(key = lambda x: self.data['costs'][x][1] - self.data['costs'][x][0], reverse = True)
-		#TRY TO FIND WAYS TO AVOID SORTING
-		
 		#CHECK FOR FEASIBILITY
 		upperCosts = np.sum([self.data['costs'][x][1] for x in investments[:self.data['gamma']]])
 		nominalCosts = np.sum([self.data['costs'][x][0] for x in investments[self.data['gamma']:]])
-
-		
 		if upperCosts + nominalCosts <= self.data['budget']:
 			of += np.sum([self.data['profits'][x] for x in investments])
 			of -= upperCosts
@@ -46,7 +42,6 @@ class GAHeuristic(object):
 					of += self.data['polynomial_gains'][key]
 		else:
 			of = -1
-
 		return of
 
 	def createPopulation(self):
@@ -55,31 +50,34 @@ class GAHeuristic(object):
 			chromosome = ""
 			for j in range(len(self.contSolution)):
 				if j in parent:
-					chromosome +='1'
+					chromosome += '1'
 				else:
-					chromosome +='0'
-
+					chromosome += '0'
 			self.population.append(chromosome)
 		
-
 	def hashingPopulation(self):
 		return [int(chromosome,2) for chromosome in self.population]
-
 
 	def parentsSelection(self, counter):
 		self.population = deepcopy(list(set(self.population)))
 		self.population.sort(key = lambda x: self.fitnessScore(x), reverse = True)
 		self.population = deepcopy(self.population[:int(100/(2**counter))])
 
-
 	def crossover(self):
 		newpopulation = []
 		couples = list(itertools.combinations(self.population,2))
 		for chromosome1, chromosome2 in couples:
 			crossoverPoint = random.randint(0, len(chromosome1))
-			newpopulation.append(chromosome1[:crossoverPoint]+chromosome2[crossoverPoint:])
-			newpopulation.append(chromosome2[:crossoverPoint]+chromosome1[crossoverPoint:])
+			newpopulation.append(chromosome1[:crossoverPoint] + chromosome2[crossoverPoint:])
+			newpopulation.append(chromosome2[:crossoverPoint] + chromosome1[crossoverPoint:])
 		self.population = deepcopy(self.population + newpopulation)
+
+	def mutation_procedure(self, chromosome):
+		mutationPoint = random.randint(0, len(chromosome)-1)
+		chromosome = list(chromosome)
+		chromosome[mutationPoint] = str(int(not bool(int(chromosome[mutationPoint]))))
+		chromosome = ''.join(chromosome)
+		return chromosome
 
 	def mutation(self):
 		#SOLUTON 1: TOTALLY RANDOM
@@ -87,8 +85,14 @@ class GAHeuristic(object):
 			mutationPoint = random.randint(0, len(chromosome)-1)
 			chromosome = list(chromosome)
 			chromosome[mutationPoint] = str(int(not bool(int(chromosome[mutationPoint]))))
-
-		#SOLUTION 2: FLIPPING THE MOST PROBABLE INVESTMENT
+			chromosome = ''.join(chromosome)
+		#SOLUTION 2: FLIPPING THE MOST PROBABLE INVESTMENT (not so useful)
+		"""
+		for i in range(0,len(self.population),5):
+			with concurrent.futures.ProcessPoolExecutor(5) as executor:
+				for chromosome in executor.map(self.mutation_procedure, self.population[i:i+5]):
+					pass
+		"""
 
 	def getOptimum(self):
 		print("Best Obj.Func. : {}".format(self.fitnessScore(self.population[0])))
@@ -123,10 +127,12 @@ class GAHeuristic(object):
 		return self.population[0],self.fitnessScore(self.population[0])
 		#"""
 
+##################################################################################################################
+
 if __name__ =='__main__':
 
-	xls = ExcelFile('results_math.xlsx')
-	df = xls.parse(xls.sheet_names[0])
+	#xls = ExcelFile('results_math.xlsx')
+	#df = xls.parse(xls.sheet_names[0])
 
 	log_name = "logs/polynomial_knapsack.log"
 	logging.basicConfig(
@@ -159,10 +165,6 @@ if __name__ =='__main__':
 
 		of, sol, comp_time = solve_polynomial_knapsack(dict_data, var_type, heuristic, indexes)
 
-		#print("\nsolution: {}".format(sol))
-		#print("objective function: {}".format(of))
-
-
 		#START OF THE GENETIC ALGORITHM
 		g = GAHeuristic(sol, dict_data)
 		solGA, objfun = g.run()
@@ -180,7 +182,7 @@ if __name__ =='__main__':
 		sollist.append(str(sol2))
 		print(str(objfun).replace('.',','))
 		print(str(round(timeStop-timeStart,3)).replace('.',','))
-
+"""
 	df['Genetic'] = name
 	df['O.F. GA'] = oflist
 	df['C.T. GA'] = time
@@ -189,7 +191,7 @@ if __name__ =='__main__':
 	perc = []
 	diftime = []
 	for i in range(0,len(oflist)):
-		p = round(100-(df['O.F. GA'][i]*100/float(df['O.F. model'][i].replace(',','.'))),4)
+		p = round(100-(df['O.F. GA'][i]*100/float(df['O.F. model'][i])),4)
 		perc.append(str(p).replace('.',','))
 		t = round(float(df['C.T. model'][i])-float(df['C.T. GA'][i]),4)
 		diftime.append(str(t).replace('.',','))
@@ -197,6 +199,6 @@ if __name__ =='__main__':
 	df['% O.F difference GA'] = perc
 	df['Time difference GA'] = diftime
 	df.to_excel("results_final.xlsx") 
-
+"""
 		
 		
