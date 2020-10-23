@@ -10,7 +10,7 @@ class Instance():
             sim_setting {[type]} -- [description]
         """
         logging.info("starting simulation...")
-        self.max_size = sim_setting['knapsack_size']
+        self.budget = sim_setting['budget']
         self.sizes = np.around(np.random.uniform(
             sim_setting['n_items']
         ))
@@ -18,7 +18,7 @@ class Instance():
         self.costs = sim_setting['costs']
         self.polynomial_gains = sim_setting['polynomial_gains']
         self.n_items = sim_setting['n_items']
-        self.gamma = sim_setting['Gamma']
+        self.gamma = sim_setting['gamma']
         logging.info("simulation end")
 
 
@@ -32,7 +32,7 @@ class Instance():
         return {
             "profits": self.profits,
             "sizes": self.sizes,
-            "budget": self.max_size,
+            "budget": self.budget,
             "n_items": self.n_items,
             "costs": self.costs,
             "polynomial_gains": self.polynomial_gains,

@@ -17,12 +17,12 @@ while not config['n_items'].isdecimal():
 config['n_items'] = int(config['n_items'])
 
 #GAMMA
-config['Gamma'] = input("Insert the maximum number of elements varying: ")
+config['gamma'] = input("Insert the maximum number of elements varying: ")
 
-while not config['Gamma'].isdecimal():
-	config['Gamma'] = input("You should insert a number: ")
+while not config['gamma'].isdecimal():
+	config['gamma'] = input("You should insert a number: ")
 
-config['Gamma'] = int(config['Gamma'])
+config['gamma'] = int(config['gamma'])
 
 
 
@@ -40,7 +40,7 @@ for i in range(config['n_items']):
 	array_profits[i] = random.uniform(0.8*np.max(matrix_costs[:,0]),100)	
 
 m = [2,3,4]
-config['knapsack_size'] = np.sum(matrix_costs[:,0])/random.choice(m)
+config['budget'] = np.sum(matrix_costs[:,0])/random.choice(m)
 
 items = list(range(config['n_items']))
 polynomial_gains = {}
@@ -60,10 +60,10 @@ config['costs'] = matrix_costs
 config['polynomial_gains'] = polynomial_gains	
 
 if config['n_items'] <= 40:
-	namefile = "config/Small_{}_{}_{}.json".format(config['n_items'],config['Gamma'],round(config['knapsack_size'],3))
+	namefile = "config/S_{}_{}_{}.json".format(config['n_items'],config['gamma'],round(config['budget'],3))
 elif config['n_items'] > 40 and config['n_items']<=100:
-	namefile = "config/Medium_{}_{}_{}.json".format(config['n_items'],config['Gamma'],round(config['knapsack_size'],3))
+	namefile = "config/M_{}_{}_{}.json".format(config['n_items'],config['gamma'],round(config['budget'],3))
 else:
-	namefile = "config/Large_{}_{}_{}.json".format(config['n_items'],config['Gamma'],round(config['knapsack_size'],3))
+	namefile = "config/L_{}_{}_{}.json".format(config['n_items'],config['gamma'],round(config['budget'],3))
 file = open(namefile,"w")
 json.dump(config, file, indent=4)
