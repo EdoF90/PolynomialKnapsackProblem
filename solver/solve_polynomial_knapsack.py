@@ -46,7 +46,7 @@ def solve_polynomial_knapsack(
     )
 
     #OBJECTIVE FUNCTION
-    obj_funct = quicksum(dict_data['profits'][0][i] * X[i] for i in items)
+    obj_funct = quicksum(dict_data['profits'][i] * X[i] for i in items)
     for h, key in enumerate(dict_data['polynomial_gains']):
         #print('h:',h,' key:',key)
         obj_funct += dict_data['polynomial_gains'][key] * Z[h]

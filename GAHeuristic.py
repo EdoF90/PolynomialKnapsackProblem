@@ -36,7 +36,7 @@ class GAHeuristic(object):
 
 		
 		if upperCosts + nominalCosts <= self.data['budget']:
-			of += np.sum([self.data['profits'][0][x] for x in investments])
+			of += np.sum([self.data['profits'][x] for x in investments])
 			of -= upperCosts
 			of -= nominalCosts
 			for key in self.data['polynomial_gains'].keys():

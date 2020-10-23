@@ -33,7 +33,7 @@ for i in range(config['n_items']):
 	matrix_costs[i,0] = random.uniform(1,50)
 	matrix_costs[i,1] =	(1+random.choice(d)) * matrix_costs[i,0]
 
-array_profits = np.zeros((config['n_items'],1), dtype = float)
+array_profits = np.zeros((config['n_items']), dtype = float)
 
 #SCRIVERE NEL REPORT; GRUOBI CI PERDE PERò POI CI GUADAGNA
 for i in range(config['n_items']):
@@ -50,8 +50,8 @@ for i in range(2, config['n_items']):
 		elem = str(tuple(np.random.choice(items, i, replace = False)))
 		polynomial_gains[elem] = random.uniform(1, 100/i)
 
-array_profits = array_profits.reshape(1,config['n_items'])
-array_profits = array_profits.tolist()
+#array_profits = array_profits.reshape(1,config['n_items'])
+array_profits = list(array_profits)
 matrix_costs = matrix_costs.reshape(config['n_items'],2)
 matrix_costs = matrix_costs.tolist()
 config['profits'] = array_profits
