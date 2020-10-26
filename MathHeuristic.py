@@ -1,31 +1,20 @@
+from pandas import *
 from Instance import Instance
 import logging
 import numpy as np
 import json
+import xlsxwriter
+from csv import writer
+import pandas as pd
+import os
+import time as t
 from solver.solve_polynomial_knapsack import solve_polynomial_knapsack
 
 	
 if __name__ == '__main__':
 
-	workbook = xlsxwriter.Workbook('results_math.xlsx')
-    worksheet = workbook.add_worksheet()
-
-    # Add a bold format to use to highlight cells.
-    format_header = workbook.add_format(properties={'bold': True, 'font_color': 'white'})
-    format_header.set_bg_color('navy')
-    format_header.set_font_size(14)
-    worksheet.set_column('A:A', 30)
-    worksheet.set_column('B:B', 25)
-    worksheet.set_column('C:C', 25)
-    worksheet.set_column('D:D', 100)
-    worksheet.write('A1', 'File name', format_header)
-    worksheet.write('B1', 'Objective Function', format_header)
-    worksheet.write('C1', 'Computational Time', format_header)
-    worksheet.write('D1', 'Solution', format_header)
-
-    # Start from the first cell below the headers.
-    row = 1
-    col = 0
+	xls = ExcelFile('results_model.xlsx')
+	df = xls.parse(xls.sheet_names[0])
 
 	log_name = "logs/polynomial_knapsack.log"
 	logging.basicConfig(
@@ -36,6 +25,11 @@ if __name__ == '__main__':
 	)
 	
 	list_of_files = os.listdir("config")
+
+	name = []
+	oflist = []
+	time =[]
+	sollist = []
 
 	for name_file in list_of_files:
 
@@ -49,6 +43,7 @@ if __name__ == '__main__':
 		var_type = 'continuous'
 		heuristic = False
 		indexes = []
+		timeStart = t.time()
 		of, sol, comp_time = solve_polynomial_knapsack(dict_data, var_type, heuristic, indexes)
 
 		#print("\nsolution: {}".format(sol))
@@ -82,16 +77,36 @@ if __name__ == '__main__':
 		heuristic = True
 
 		of, sol, comp_time = solve_polynomial_knapsack(dict_data, var_type, heuristic, indexes)
-
+		timeStop = t.time()
 		#print("\nsolution: {}".format(sol))
 		#print("objective function: {}".format(of))
+		of = round(of,3)
+		objfun = str(of).replace(".",",")
 
-		objfun=str(of).replace(".",",")
+		sol2 = []
+		#sol with number of the items
+		for i in range(0,len(sol)):
+			if sol[i]==1:
+				sol2.append(i)
 
-        worksheet.write(row, 0, name_file)
-        worksheet.write(row, 1, objfun)
-        worksheet.write(row, 2, comp_time)
-        worksheet.write(row, 3, str(sol))
-        row += 1
+		name.append(name_file)
+		oflist.append(objfun)
+		time.append(round(timeStop-timeStart,3))
+		sollist.append(str(sol2))
 
-    workbook.close()		
+	df['Name math'] = name
+	df['O.F. math'] = oflist
+	df['C.T. math'] = time
+	df['Sol math'] = sollist
+
+	perc = []
+	diftime = []
+	for i in range(0,len(oflist)):
+		p = round(100-(float(df['O.F. math'][i].replace(',','.'))*100/float(df['O.F. model'][i].replace(',','.'))),4)
+		perc.append(str(p).replace('.',','))
+		t = round(float(df['C.T. model'][i])-float(df['C.T. math'][i]),4)
+		diftime.append(str(t).replace('.',','))
+
+	df['% O.F difference math'] = perc
+	df['Time difference math'] = diftime
+	df.to_excel("results_math.xlsx") 

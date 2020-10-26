@@ -9,29 +9,12 @@ from csv import writer
 import os
 import xlsxwriter
 from solver.solve_polynomial_knapsack import solve_polynomial_knapsack
+import pandas as pd
 
 
 if __name__ == '__main__':
     
-    workbook = xlsxwriter.Workbook('results.xlsx')
-    worksheet = workbook.add_worksheet()
-
-    # Add a bold format to use to highlight cells.
-    format_header = workbook.add_format(properties={'bold': True, 'font_color': 'white'})
-    format_header.set_bg_color('navy')
-    format_header.set_font_size(14)
-    worksheet.set_column('A:A', 30)
-    worksheet.set_column('B:B', 25)
-    worksheet.set_column('C:C', 25)
-    worksheet.set_column('D:D', 100)
-    worksheet.write('A1', 'File name', format_header)
-    worksheet.write('B1', 'Objective Function', format_header)
-    worksheet.write('C1', 'Computational Time', format_header)
-    worksheet.write('D1', 'Solution', format_header)
-
-    # Start from the first cell below the headers.
-    row = 1
-    col = 0
+    #df = pd.DataFrame()
 
     log_name = "logs/polynomial_knapsack.log"
     logging.basicConfig(
@@ -41,11 +24,16 @@ if __name__ == '__main__':
         filemode='w'
     )
     
-    list_of_files = os.listdir("config")
+    list_of_files = os.listdir("config_enormi")
+
+    name=[]
+    oflist=[]
+    time=[]
+    sollist=[]
 
     for name_file in list_of_files:
 
-        fp = open("config/"+name_file, 'r')
+        fp = open("config_enormi/"+name_file, 'r')
         sim_setting = json.load(fp)
         fp.close()
 
@@ -56,32 +44,27 @@ if __name__ == '__main__':
         heuristic = False
         indexes = []
         of, sol, comp_time = solve_polynomial_knapsack(dict_data, var_type, heuristic, indexes)
-
-        #print("\nsolution: {}".format(sol))
-        #print("objective function: {}".format(of))
-        
-        """
-        # printing results of a file
-        file_output = open(
-            "./results/exp_general_table.csv",
-            "w"
-        )
-        file_output.write("method, of, sol, time\n")
-        file_output.write("{}, {}, {}, {}\n".format(
-            "heu", of_heu, sol_heu, comp_time_heu
-        ))
-        file_output.write("{}, {}, {}, {}\n".format(
-            "exact", of_exact, sol_exact, comp_time_exact
-        ))
-        file_output.close()
-        """
-
+        of=round(of,3)
         objfun=str(of).replace(".",",")
 
-        worksheet.write(row, 0, name_file)
-        worksheet.write(row, 1, objfun)
-        worksheet.write(row, 2, comp_time)
-        worksheet.write(row, 3, str(sol))
-        row += 1
+        sol2=[]
+        #sol with number of the items
+        for i in range(0,len(sol)):
+            if sol[i]==1:
+                sol2.append(i)
 
-    workbook.close()
+        name.append(name_file)
+        oflist.append(objfun)
+        time.append(round(comp_time,3))
+        sollist.append(str(sol2))
+        print(str(objfun).replace('.',','))
+        print(str(round(comp_time,3)).replace('.',','))
+    """
+    df['Name model']=name
+    df['O.F. model']=oflist
+    df['C.T. model']=time
+    df['Sol model']=sollist
+
+    df.to_excel("results_model.xlsx") 
+    """
+
