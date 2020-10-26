@@ -25,7 +25,6 @@ while not config['Gamma'].isdecimal():
 config['Gamma'] = int(config['Gamma'])
 
 
-
 matrix_costs = np.zeros((config['n_items'],2), dtype = float)
 
 d = [0.3,0.6,0.9]

@@ -5,7 +5,7 @@ from gurobipy import GRB
 
 
 def solve_polynomial_knapsack(
-    dict_data, var_type, heuristic=False, indexes=[], gap=None, time_limit=None, verbose=False
+    dict_data, var_type, indexes=[], fix_sol=[], gap=None, time_limit=None, verbose=False
 ):
     n_items = len(dict_data['costs'])
     items = range(dict_data['n_items'])
@@ -86,12 +86,16 @@ def solve_polynomial_knapsack(
                 gp.quicksum(X[i] for i in key) <= len(key) - 1 + Z[h],
                 "hog {}".format(key)
             )
-    if heuristic:
-        for i in indexes:
-            model.addConstr(
-                X[i] >= 1, "mathheur_constr{}".format(i)
-            )
+    
+    for i in indexes:
+        model.addConstr(
+            X[i] == 1, "mathheur_constr{}".format(i)
+        )
 
+    for i, ele in enumerate(fix_sol):
+        model.addConstr(
+            X[i] == ele, "fix solution{}".format(i)
+        )
 
     model.update()
     if gap:

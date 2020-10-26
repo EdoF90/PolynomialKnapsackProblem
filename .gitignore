@@ -4,3 +4,9 @@ out
 gen
 *.pyc
 *.log
+
+__pycache__/
+
+
+results/*
+!results/.gitkeep
