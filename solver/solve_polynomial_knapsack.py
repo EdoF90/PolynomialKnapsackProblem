@@ -1,9 +1,11 @@
 import time
 import logging
-from gurobipy import *
+import gurobipy as gp
+from gurobipy import GRB
+
 
 def solve_polynomial_knapsack(
-    dict_data, var_type, heuristic, indexes, gap=None, time_limit=None, verbose=False
+    dict_data, var_type, heuristic=False, indexes=[], gap=None, time_limit=None, verbose=False
 ):
     n_items = len(dict_data['costs'])
     items = range(dict_data['n_items'])
@@ -18,7 +20,7 @@ def solve_polynomial_knapsack(
     problem_name = "polynomial_knapsack"
     logging.info("{}".format(problem_name))
 
-    model = Model(problem_name)
+    model = gp.Model(problem_name)
     X = model.addVars(
         n_items,
         lb=0,
@@ -46,18 +48,18 @@ def solve_polynomial_knapsack(
     )
 
     #OBJECTIVE FUNCTION
-    obj_funct = quicksum(dict_data['profits'][0][i] * X[i] for i in items)
+    obj_funct = gp.quicksum(dict_data['profits'][0][i] * X[i] for i in items)
     for h, key in enumerate(dict_data['polynomial_gains']):
-        #print('h:',h,' key:',key)
         obj_funct += dict_data['polynomial_gains'][key] * Z[h]
-    obj_funct -= quicksum(dict_data['costs'][i][0] * X[i] for i in items)
-    obj_funct -= (dict_data['gamma']*Rho + quicksum(Pi[i] for i in items))
+
+    obj_funct -= gp.quicksum(dict_data['costs'][i][0] * X[i] for i in items)
+    obj_funct -= (dict_data['gamma']*Rho + gp.quicksum(Pi[i] for i in items))
     
     model.setObjective(obj_funct, GRB.MAXIMIZE)
 
     #CONSTRAINS
     model.addConstr(
-         quicksum(dict_data['costs'][i][0] * X[i] for i in items) + dict_data['gamma']*Rho + quicksum(Pi[i] for i in items) <= dict_data['budget'],
+         gp.quicksum(dict_data['costs'][i][0] * X[i] for i in items) + dict_data['gamma']*Rho + gp.quicksum(Pi[i] for i in items) <= dict_data['budget'],
         "budget_limit"
     )
 
@@ -76,12 +78,12 @@ def solve_polynomial_knapsack(
         #print("",dict_data['polynomial_gains'][str(key)],"\n",key,"\n")
         if dict_data['polynomial_gains'][str(key)] > 0:
             model.addConstr(
-                quicksum(X[i] for i in key) >= len(key) * Z[h],
+                gp.quicksum(X[i] for i in key) >= len(key) * Z[h],
                 "hog {}".format(key)
             )
         else:
             model.addConstr(
-                quicksum(X[i] for i in key) <= len(key) - 1 + Z[h],
+                gp.quicksum(X[i] for i in key) <= len(key) - 1 + Z[h],
                 "hog {}".format(key)
             )
     if heuristic:
