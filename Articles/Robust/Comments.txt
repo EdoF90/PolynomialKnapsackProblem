@@ -1,0 +1,22 @@
+- The price of robustness --> sì; quello da cui siamo partiti per definire problema originario
+
+- Postoptimal analysisof a linear program under simultaneous changes in matrix coefficients --> viene citato dal primo; analizza sensibilità soluzione al variare della matrice di coefficienti (che dipende linearmente da parametro theta) --> utilizza sviluppi di taylor; vedere eventualmente dove viene citato
+
+- ROBUST SOLUTIONS TO UNCERTAIN SEMIDEFINITE PROGRAMS --> The main objective of this paper is to quantify the effect of unknown but bounded deterministic perturbation of problem data on solutions; solution remains feasible despite the allowable, not necessarily small, perturbation; distribution of the perturbation is uniform
+
+- Robust solutions of Linear Programming problems contaminated with uncertain data --> molto interessante perché si muove sul dataset NETLIB e lo commenta --> NON PROPONE NUOVE MODELLI (quelli che usa li cita in bibliografia) ma commenta risultati!
+
+- Convex programming with set-inclusive constraints and applications to inexact linear programming --> articolo molto vecchio ma leggendo quanto si dice nel price of robustness è il primo che si occupa del problema robusto
+
+-Complexity Results and Exact Algorithms for Robust Knapsack Problems --> articolo più recente di 'the price of robustness' in cui vengono considerati 'incerti' sia i costi sia i profitti (primo paper a farlo congiuntamente loro dicono); propongono euristica, magari idee buone
+
+- Heuristic and exact algorithms for the max–min optimization of the multi-scenario knapsack problem --> particolare applicazione del problema dello zaino robusto, in cui più scenari vengono considerati e ogni scenario ha i suoi profitti nominal ed upper; obiettivo = massimizzare in scenario peggiore. Data creator costruito secondo il loro modello. Viene proposta euristica, darci un'occhiata
+
+- Approximation of min–max and min–max regret versions of some combinatorial optimization problems --> "This paper investigates, for the first time in the literature, the approximation of min–max (regret) versions of classical problems"; il problema dello zaino viene citato ma 'min–max regret knapsack is not at all approxi-mable'. Magari merita di darci un'occhiata ma credo sia troppo generale
+
+- A cooperative local search-based algorithm for the Multiple-Scenario Max–Min Knapsack Problem --> MOOOLTO interessante; propone due euristiche che, leggendo l'abstract, sembrano molto in linea con la nostra (Graph). C'è anche una parte sui dataset scelti che potrebbero dare un termine di paragone
+
+- Min-Max Regret Robust Optimization Approach on Interval Data Uncertainty --> non solo relativo al problema dello zaino ma in generale a contesti in cui 'Each uncertain model parameter can independently take its value from a real compact interval with unknown probability distribution'; propone formulazione matematiche; sembra troppo generico 
+ 
+- Scenario relaxation algorithm for finite scenario-based min–max regret and min–max relative regret robust optimization -> commento simile a quello precedente; propone però un algoritmo di cui magari è opportuno informarsi
+ 

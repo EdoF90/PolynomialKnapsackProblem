@@ -1,0 +1,25 @@
+Quadratic Knapsack Problems --> Articolo di G.Gallo, che abbiamo utilizzato come riferimento per la costruzione dei dataset; utilizza tecnica 'upper planes' per la risoluzione e presenta una serie di risultati con cui potremmo confrontarci.
+
+A fast parametric maximum flow algorithm and applications --> sempre di G.Gallo. Sarebbe da capire dove viene citato nell'articolo del Pissinger perché non capisco la correlazione con il problema trattato.
+
+Computers and Intractability: A Guide to the Theory of NP-Completeness --> no. Troppo generico; sarebbe da capire dove viene citato
+
+Lagrangian relaxation for integer programming, math. --> Può fornire un supporto teorico al problema duale cui abbiamo fatto ricorso per risolvere il nostro problema; l'articolo verte sul rilassamento Lagrangiano e sui suoi possibili utilizzi e semplificazioni. 
+
+Solving Quadratic Knapsack Problems by Reformulation and Tabu Search. Single Constraint Case --> sì. Molto interessante in quanto propone a sua volta meta-heuristiche che aumentano la dimensione del problema trattabile; nell'abstract tuttavia non parla dei risultati. 'Models containing more than 100 variables tax current methods to their limits... we show that it is possible to handle quadratic knapsack problems of dramatically greater size than those within the capacity of previous methods' Da leggere con più attenzione 
+
+Geometric Algorithms and Combinatorial Optimization, Algorithms and Combinatorics --> no; troppo generico; sarebbe da capire dove viene citato
+
+Approximations of Pseudo-Boolean Functions; 1 Applications to Game Theory --> no; sarebbe da capire dove viene citato
+
+Efficient Methods For Solving Quadratic 0–1 Knapsack Problems --> Molto interessante poiché propone euristica che risolve il problema restando nell'1% dall'ottimo diminuendo drasticamente il numero di nodi esaminati; la tecnica consiste nel fissaggio di alcune vairabili che sono ottimali per alcuni sottoproblemi. Da valutare con più attenzione.
+
+The traveling-salesman problem and minimum spanning trees: Part II --> no; sarebbe da capire dove viene citato 
+
+Semidefinite programming for combinatorial optimization --> no; sarebbe da capire dove viene citato 
+
+Min-cut clustering --> no; sarebbe da capire dove viene citato 
+
+Algorithms and Computer Implementations --> pare sia un libro sul knapsack; non so come ottenerlo ma qualcosa ci sarà che farà al caso nostro in 296 pagine? 
+
+Reoptimization in Lagrangian methods for the 0-1 quadratic knapsack problem --> Partendo dal presupposto che verranno utilizzati rilassamenti Lagrangiani, l'articolo si propone di ottimizzare la fase di pre-processamento dei suddetti in maniera da ottimizzare le tempistiche. 'Namely, reoptimization is introduced to accelerate each independent sequence of 0-1 linear knapsack problems induced by the Lagrangian relaxation as well as the Lagrangian decomposition'. Anche in qusto caso alla fine ci sono risultati con cui confrontarsi.
