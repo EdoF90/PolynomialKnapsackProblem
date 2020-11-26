@@ -64,8 +64,8 @@ for it in range(len(list(d.keys()))): #CYCLING ON THE NAME
 				elif resultModel!=-1 and not math.isnan((timeModel-timeHeu)/timeModel) and resultHeu==-1:
 					dict_result[penalization][weight]["counter_no_result"]+=1
 
-#fig, (ax1, ax2) = plt.subplots(1,2)
-fig, (ax2) = plt.subplots(1,figsize=(30,30))
+fig, (ax1, ax2) = plt.subplots(1,2,figsize=(60,30))
+#fig, (ax1) = plt.subplots(1,figsize=(30,30))
 fig.suptitle('Boxplots grid search')
 stats_dic={}
 it=0
@@ -97,19 +97,26 @@ for penalization in dict_result.keys():
 
 	x_ax=np.arange(step,step+len(stats_dic[penalization].keys()))
 
-	#ax1.plot(x_ax,[stats_dic[penalization][weight]["avg_gap_results"] for weight in stats_dic[penalization].keys()],label=f"p={penalization}")
+	ax1.plot(x_ax,[stats_dic[penalization][weight]["avg_gap_results"] for weight in stats_dic[penalization].keys()],label=f"p={penalization}")
 	ax2.plot(x_ax,[stats_dic[penalization][weight]["avg_gap_times"] for weight in stats_dic[penalization].keys()],label=f"p={penalization}")
-	#ax1.scatter(x_ax,[stats_dic[penalization][weight]["avg_gap_results"] for weight in stats_dic[penalization].keys()])
+	ax1.scatter(x_ax,[stats_dic[penalization][weight]["avg_gap_results"] for weight in stats_dic[penalization].keys()])
 	ax2.scatter(x_ax,[stats_dic[penalization][weight]["avg_gap_times"] for weight in stats_dic[penalization].keys()])	
 	#ax1.fill_between(x_ax,[stats_dic[penalization][weight]["max_result"] for weight in stats_dic[penalization].keys()],\
 	#	[stats_dic[penalization][weight]["min_result"] for weight in stats_dic[penalization].keys()],alpha=0.5)
-	
-	ax2.fill_between(x_ax,[stats_dic[penalization][weight]["avg_gap_times"]-\
-		2*stats_dic[penalization][weight]["std_gap_times"] for weight in stats_dic[penalization].keys()],\
-		[stats_dic[penalization][weight]["avg_gap_times"]+\
-		2*stats_dic[penalization][weight]["std_gap_times"] for weight in stats_dic[penalization].keys()],
+	"""
+	ax1.fill_between(x_ax,[stats_dic[penalization][weight]["avg_gap_results"]-\
+		2*stats_dic[penalization][weight]["std_gap_results"] for weight in stats_dic[penalization].keys()],\
+		[stats_dic[penalization][weight]["avg_gap_results"]+\
+		2*stats_dic[penalization][weight]["std_gap_results"] for weight in stats_dic[penalization].keys()],
 		alpha=0.5)
-
+	"""
+	ax2.fill_between(x_ax,[stats_dic[penalization][weight]["avg_gap_times"]-\
+			2*stats_dic[penalization][weight]["std_gap_times"] for weight in stats_dic[penalization].keys()],\
+			[stats_dic[penalization][weight]["avg_gap_times"]+\
+			2*stats_dic[penalization][weight]["std_gap_times"] for weight in stats_dic[penalization].keys()],
+			alpha=0.5)
+	for it2 in range(len(x_ax)):
+		ax1.text(x_ax[it2],2.74,[stats_dic[penalization][weight]["counter_no_result"] for weight in stats_dic[penalization].keys()][it2])
 	"""
 	ax2.fill_between(x_ax,[stats_dic[penalization][weight]["avg_gap_times"]+\
 		2*stats_dic[penalization][weight]["std_gap_times"] for weight in stats_dic[penalization].keys()],\
@@ -120,19 +127,13 @@ for penalization in dict_result.keys():
 	"""
 	step=it
 
-#ax1.set_title("Relative residuals")
+ax1.set_title("Relative residuals")
 ax2.set_title("Times taken")
-#ax1.legend()
-#plt.sca(ax1)
-#plt.xticks(range(it), x_ax_label,rotation=45,fontsize=8)
-#print(it)
-#print(x_ax_label)
+ax1.legend()
+plt.sca(ax1)
+plt.xticks(range(it), x_ax_label,rotation=45,fontsize=8)
 plt.sca(ax2)
 plt.xticks(range(it), x_ax_label,rotation=45,fontsize=8)
 plt.ylim(0)
-#ax1.set_xticks(np.arange(it),x_ax_label)
-#ax1.set_xticklabels(x_ax_label)
 ax2.legend()
-#ax2.set_xticks(np.arange(it),x_ax_label)
-#ax2.set_xticklabels(x_ax_label)
 plt.show()	

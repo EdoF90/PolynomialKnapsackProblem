@@ -15,7 +15,7 @@ from solver.solve_polynomial_knapsack import solve_polynomial_knapsack
 	
 
 class GAHeuristic(object):
-	def __init__(self, contSolution, data):
+	def __init__(self, contSolution, data,n_chromosomes, penalization,weight ):
 		self.contSolution = contSolution
 		self.data = data
 		self.items = list(range(data['n_items']))
@@ -25,6 +25,9 @@ class GAHeuristic(object):
 		synWork=[key.replace("(","").replace(")","").replace("'","").split(",") for key in self.data['polynomial_gains'].keys()]
 		self.synSet=[set(map(int,k)) for k in synWork]
 		self.counterInf=0
+		self.n_chromosomes=n_chromosomes
+		self.penalization=penalization
+		self.weight=weight
 
 	def fitnessScore(self, chromosome):
 		of = 0
@@ -48,11 +51,11 @@ class GAHeuristic(object):
 		return of
 
 	def createPopulation(self):
-		for k in range(100):
+		for k in range(self.n_chromosomes):
 			chromosome=""
 			count=0
 			for i in range(0,len(self.contSolution)):
-				if random.uniform(0,1) <= self.contSolution[i]:#-0.05*int(k/int(70*0.9)):
+				if random.uniform(0,1) <= self.contSolution[i]-self.penalization*int(k/int(self.n_chromosomes*self.weight)):
 					chromosome += '1'
 					count+=1
 				else:
@@ -71,7 +74,7 @@ class GAHeuristic(object):
 		self.population.sort(key = lambda x: self.fitnessScore(x), reverse = True)
 		#tsto=t.time()
 		#print("\tTook {} to order!".format(tsto-tsta))
-		self.population = deepcopy(self.population[:int(100/(2**counter))])
+		self.population = deepcopy(self.population[:int(self.n_chromosomes/(2**counter))])
 		if counter==0 and len(self.population)==1:
 			self.population += list(itertools.combinations(self.population[0],len(self.population[0])-1))
 			self.population = map(list,self.population)
@@ -159,6 +162,10 @@ if __name__ =='__main__':
 	with open('Results/Model_results/model_second_configs.json') as f:
 		runned_model=json.load(f)
 	
+	n_chromosomes=70
+	penalization=0.04
+	weight=0.60
+
 	alreadyRunned=runned_model.keys()
 	for name_file in list_of_files:
 		if name_file in alreadyRunned:
@@ -178,7 +185,7 @@ if __name__ =='__main__':
 
 			of, sol, comp_time = solve_polynomial_knapsack(dict_data, var_type, heuristic, indexes)
 			#START OF THE GENETIC ALGORITHM
-			g = GAHeuristic(sol, dict_data)
+			g = GAHeuristic(sol, dict_data, n_chromosomes, penalization,weight)
 			solGA, objfun = g.run()
 			timeStop = t.time()
 

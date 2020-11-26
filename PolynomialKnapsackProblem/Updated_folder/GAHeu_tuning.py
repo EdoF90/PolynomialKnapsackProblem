@@ -184,7 +184,7 @@ if __name__ =='__main__':
 					for penalization in np.arange(0.01,0.06,0.01):
 						print(f"\t\tWith penalization: {penalization}")
 						residuals[name_file.split(".")[0]][str(n_chromosome)][str(penalization)]={}
-						for weight in np.arange(20,90,10):
+						for weight in np.arange(0.2,1,0.1):
 							try:
 								print(f"\t\t\tWith weight: {weight}")
 
@@ -215,7 +215,7 @@ if __name__ =='__main__':
 								exc_type, exc_obj, exc_tb = sys.exc_info()
 								print("{},{}".format(exc_type,exc_tb.tb_lineno))
 								exit()
-	with open("Results/Validation/validation_more_complete_2.json","w") as file:
+	with open("Results/Validation/validation_more_complete.json","w") as file:
 		json.dump(residuals,file,indent=4)
 					
 
