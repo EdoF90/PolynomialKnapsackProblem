@@ -5,7 +5,7 @@ import numpy as np
 import time as t
 import math
 
-with open("Results/Validation/validation_more_complete_2.json") as f:
+with open("Results/Validation/validation_more_complete.json") as f:
 	d=json.load(f)
 
 dfs = pd.read_excel("Results/Model_results/new_results(config_final).xlsx", sheet_name="Modello",header=0,skiprows=1)
@@ -92,7 +92,7 @@ for penalization in dict_result.keys():
 		print(f"\tSTD gap time:{stats_dic[penalization][weight]['std_gap_times']}")
 		print(f"\tNumber of missed results:{stats_dic[penalization][weight]['counter_no_result']}")
 		it+=1
-		x_ax_label.append(weight)
+		x_ax_label.append(str(round(float(weight),2)))
 		#ax1.boxplot(dict_result[penalization][weight]["gap_result"],labels=[f"p={penalization};w={weight}"],positions=[it])
 
 	x_ax=np.arange(step,step+len(stats_dic[penalization].keys()))
@@ -115,6 +115,7 @@ for penalization in dict_result.keys():
 			[stats_dic[penalization][weight]["avg_gap_times"]+\
 			2*stats_dic[penalization][weight]["std_gap_times"] for weight in stats_dic[penalization].keys()],
 			alpha=0.5)
+	
 	for it2 in range(len(x_ax)):
 		ax1.text(x_ax[it2],2.74,[stats_dic[penalization][weight]["counter_no_result"] for weight in stats_dic[penalization].keys()][it2])
 	"""

@@ -3,8 +3,6 @@ from Instance import Instance
 import logging
 import numpy as np
 import json
-import xlsxwriter
-from csv import writer
 import pandas as pd
 import os
 import random
@@ -67,6 +65,9 @@ class GAHeuristic(object):
 	def hashingPopulation(self):
 		return [int(chromosome,2) for chromosome in self.population]
 
+	def mapping(self,elem):
+		return "".join(elem)
+		
 	def parentsSelection(self, counter):
 		self.population = deepcopy(list(set(self.population)))
 		#tsta=t.time()
@@ -76,8 +77,7 @@ class GAHeuristic(object):
 		#print("\tTook {} to order!".format(tsto-tsta))
 		self.population = deepcopy(self.population[:int(self.n_chromosomes/(2**counter))])
 		if counter==0 and len(self.population)==1:
-			self.population += list(itertools.combinations(self.population[0],len(self.population[0])-1))
-			self.population = map(list,self.population)
+			self.population += list(map(self.mapping,list(itertools.combinations(self.population[0],len(self.population[0])-1))))
 
 	def crossover(self):
 		newpopulation = []
@@ -105,13 +105,6 @@ class GAHeuristic(object):
 
 	def getOptimum(self):
 		print("Best Obj.Func. : {}".format(self.fitnessScore(self.population[0])))
-	
-	def diffOptimum(self):
-		opt = (self.population[0],self.fitnessScore(self.population[0]))
-		self.sequenceOpt.append(opt)
-		if len(self.sequenceOpt) > 1:
-			return self.sequenceOpt[-1][1] - self.sequenceOpt[-2][1]
-		return 1
 
 	def run(self):
 		counter = 0
@@ -157,47 +150,47 @@ if __name__ =='__main__':
 		filemode='w'
 	)
 
-	list_of_files = os.listdir("config_final_2")
+	PATH_CONFIG_FOLDER="config_final_2"
+	NAME_OUTPUT_FILE="results_GAHeu_modified.txt"
+	OUTPUT_FOLDER="Results/Genetic_results/Second_configs/"+NAME_OUTPUT_FILE
+
+	list_of_files = os.listdir(PATH_CONFIG_FOLDER)
 	
-	with open('Results/Model_results/model_second_configs.json') as f:
-		runned_model=json.load(f)
-	
+	#BEST PARAMS FROM TUNING -> n_chromosomes=70;penalization=0.03;weight=0.6
 	n_chromosomes=70
-	penalization=0.04
+	penalization=0.03
 	weight=0.60
 
-	alreadyRunned=runned_model.keys()
 	for name_file in list_of_files:
-		if name_file in alreadyRunned:
+		print("Doing file {}".format(name_file))
+		fp = open(PATH_CONFIG_FOLDER+name_file, 'r')
+		sim_setting = json.load(fp)
+		fp.close()
 
-			print("Doing file {}".format(name_file))
-			fp = open("config_final_2/"+name_file, 'r')
-			sim_setting = json.load(fp)
-			fp.close()
+		inst = Instance(sim_setting)
+		dict_data = inst.get_data()
 
-			inst = Instance(sim_setting)
-			dict_data = inst.get_data()
+		var_type = 'continuous'
+		heuristic = False
+		indexes = []
+		timeStart = t.time()
 
-			var_type = 'continuous'
-			heuristic = False
-			indexes = []
-			timeStart = t.time()
+		of, sol, comp_time = solve_polynomial_knapsack(dict_data, var_type, heuristic, indexes)
+		#START OF THE GENETIC ALGORITHM
+		g = GAHeuristic(sol, dict_data, n_chromosomes, penalization,weight)
+		solGA, objfun = g.run()
+		timeStop = t.time()
 
-			of, sol, comp_time = solve_polynomial_knapsack(dict_data, var_type, heuristic, indexes)
-			#START OF THE GENETIC ALGORITHM
-			g = GAHeuristic(sol, dict_data, n_chromosomes, penalization,weight)
-			solGA, objfun = g.run()
-			timeStop = t.time()
+		sol2 = []
+		#sol with number of the items
+		for i in range(0,len(solGA)):
+			if solGA[i]=='1':
+				sol2.append(i)
+		
+		#print()
+		#print(str(objfun).replace('.',','))
+		#print(str(round(timeStop-timeStart,3)).replace('.',','))
 
-			sol2 = []
-			#sol with number of the items
-			for i in range(0,len(solGA)):
-				if solGA[i]=='1':
-					sol2.append(i)
-
-			#print()
-			#print(str(objfun).replace('.',','))
-			#print(str(round(timeStop-timeStart,3)).replace('.',','))
-			with open('Results/Genetic_results/Second_configs/results_GAHeu_non_modified.txt', 'a+') as f:
-				f.write('{},{},{}\n'.format(name_file,objfun,round(timeStop-timeStart,3)))
-	
+		with open(OUTPUT_FOLDER, 'a+') as f:
+			f.write('{},{},{}\n'.format(name_file,objfun,round(timeStop-timeStart,3)))
+		

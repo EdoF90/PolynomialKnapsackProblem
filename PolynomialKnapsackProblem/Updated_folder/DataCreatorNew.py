@@ -4,10 +4,10 @@ import math
 import numpy as np
 import itertools
 
-CONFIG_DIR="./config_final_2/"
+CONFIG_DIR="./config_final_3/"
 n_times=200
-random.seed(42)
-numerosity=np.arange(100,1501,n_times)
+random.seed(44)
+numerosity=np.arange(100,1500,n_times)
 for i in range(n_times):
 	for el in numerosity:
 		print("We are at element {}".format(el))

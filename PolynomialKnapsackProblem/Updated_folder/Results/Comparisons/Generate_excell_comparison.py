@@ -2,12 +2,12 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import json
 
-file_json="Results/Model_results/model_second_configs.json"
+file_json="Results/Model_results/model_first_configs.json"
+heu_1="Results/Genetic_results/First_configs/results_GAHeu_modified.txt"
+heu_2="Results/Genetic_results/First_configs/results_GAHeu_non_modified.txt"
 
 with open(file_json) as f:
 	model_results=json.load(f)
-
-heu_1="Results/Genetic_results/Second_configs/results_GAHeu_modified.txt"
 
 dictHeuMod={}
 
@@ -17,8 +17,6 @@ with open(heu_1) as f:
 		obj_heu=line.split(",")[1]
 		comp_time_heu=line.split(",")[2]
 		dictHeuMod[name]=((float(obj_heu.strip()),float(comp_time_heu.strip())))
-
-heu_2="Results/Genetic_results/Second_configs/results_GAHeu_non_modified.txt"
 
 dictHeuNonMod={}
 
@@ -43,6 +41,7 @@ excel_file={
 	"PercentageResHeu2":[]
 }
 
+
 for name in model_results:
 	excel_file["Name"].append(name)
 	excel_file["Result_Model"].append(model_results[name][0])
@@ -59,4 +58,4 @@ for name in model_results:
 df2=pd.DataFrame(excel_file,columns=["Name","Result_Model","Result_Heu","Result_Heu2",\
 	"PercentageResHeu1","PercentageResHeu2","Time_Model","Time_Heu","Time_Heu2",\
 	"Diff_Time_Model_Heu","Diff_Time_Model_Heu2"])
-df2.to_excel("Results/Comparisons/Second_configs_comparison.xlsx")
+df2.to_excel("Results/Comparisons/First_configs_comparison.xlsx")
