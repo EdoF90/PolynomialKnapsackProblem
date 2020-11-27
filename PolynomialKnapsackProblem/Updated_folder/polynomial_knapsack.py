@@ -22,7 +22,11 @@ if __name__ == '__main__':
 		filemode='w'
 	)
 	
-	list_of_files = os.listdir("config_final_2")
+	PATH_CONFIG_FOLDER="config_final_2"
+	NAME_OUTPUT_FILE="model.txt"
+	OUTPUT_FOLDER="Results/Model_results/"+NAME_OUTPUT_FILE
+
+	list_of_files = os.listdir(PATH_CONFIG_FOLDER)
 
 	name=[]
 	oflist=[]
@@ -32,7 +36,7 @@ if __name__ == '__main__':
 
 	for name_file in list_of_files:
 		print("Doing file {}".format(name_file))
-		fp = open("config_final_2/"+name_file, 'r')
+		fp = open(PATH_CONFIG_FOLDER+name_file, 'r')
 		sim_setting = json.load(fp)
 		fp.close()
 
@@ -77,6 +81,6 @@ if __name__ == '__main__':
 		#sollist.append(str(sol2))
 		#print(str(objfun).replace('.',','))
 		#print(str(round(comp_time,3)).replace('.',','))
-		with open('Results/results_ultimate.txt', 'a+') as f:
+		with open(OUTPUT_FOLDER, 'a+') as f:
 			f.write('{},{},{}\n'.format(name_file,objfun,round(comp_time,3)))
 

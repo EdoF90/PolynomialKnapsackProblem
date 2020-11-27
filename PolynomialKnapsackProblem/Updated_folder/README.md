@@ -6,19 +6,10 @@ At the moment it contains:
 script to launch the model (call functions of sub-folder 'solver' and generate an instance through 'Instance.py'; needs also the 'logs' folder to output logs.). At the moment is appending results on a txt file (Results/Model_results); CHECK BEFORE RUNNING!
 
 ### GAHeuristic.py:
-the genetic heuristic. At the moment is appending results on a txt file (Results/Genetic_results/Second_configs); CHECK BEFORE RUNNING!
-
-### GAHeu_tuning.py:
-tool used to tune the hyper-parameters of the Genetic heu.
+the genetic heuristic. At the moment is appending results on a txt file; it requires as input both the input-folder (config) and the output one -> CHECK BEFORE RUNNING!
 
 ### DataCreatorNew.py:
 script to generate new configs; at the moment is set to produce 200 configs for each numerosity (from 100 to 1500) and there are different policies to handle the synergies (Exponential - Square Root - Linear)
-
-### Unify_model_heu.py:
-used to unify the genetic's outputs with the model's one in the same excel file
-
-### Validations_results.py:
-Used to determine the best hyper-parameters combination and to define the final version of the GAHeuristic
 
 ### config_final
 Set of config used to validate (both GAHeuristic and MLHeuristic). We have availability for the model's results for each one of the config belonging to this folder
