@@ -18,8 +18,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.datasets import load_iris
 from sklearn.linear_model import LogisticRegression
 
-from simulator.instance import  Instance
-from solver.solve_polynomial_knapsack import solve_polynomial_knapsack
+from instance import  Instance
+from solve_polynomial_knapsack import solve_polynomial_knapsack
 
 
 if __name__ == '__main__':
