@@ -1,7 +1,12 @@
-12:48:37 INFO: starting simulation...
-12:48:37 INFO: simulation end
-12:48:37 INFO: getting data from instance...
-12:48:37 INFO: polynomial_knapsack
-12:48:37 INFO: Using license file /Users/lorenzocascioli/gurobi.lic
-12:48:37 INFO: Academic license - for non-commercial use only - expires 2021-01-13
-12:48:39 INFO: polynomial_knapsack
+22:03:25 INFO: starting simulation...
+22:03:25 INFO: simulation end
+22:03:25 INFO: getting data from instance...
+22:03:25 INFO: polynomial_knapsack
+22:03:25 INFO: 
+22:03:25 INFO: --------------------------------------------
+22:03:25 INFO: Warning: your license will expire in 5 days
+22:03:25 INFO: --------------------------------------------
+22:03:25 INFO: 
+22:03:25 INFO: Using license file /home/mrboffa/gurobi.lic
+22:03:25 INFO: Academic license - for non-commercial use only
+22:03:25 INFO: polynomial_knapsack
