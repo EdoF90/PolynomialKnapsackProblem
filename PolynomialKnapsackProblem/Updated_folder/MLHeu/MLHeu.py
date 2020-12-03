@@ -25,7 +25,8 @@ if __name__ == '__main__':
 		filemode='w'
 	)
 
-	file_model = './model_data/finalized_model.sav'
+	#file_model = './model_data/finalized_model.sav'
+	file_model = './model_data/finalized_model_rTrees.sav'
 	CONFIG_PATH="../config_final_2/"
 	RESULTS_PATH="../Results/MLHeu/resultsMLHeu.xlsx"
 	N_FEATURES = 6
@@ -102,11 +103,11 @@ if __name__ == '__main__':
 			#list to pass to the solver to impose constraints on variables fixed to 0 or 1
 			y_ml=np.ones(dict_data['n_items'])*(-1)   
 
-			while len(list_ymlP_0)>0.15*count_0:
+			while len(list_ymlP_0)>0.1*count_0:
 				ele=list_ymlP_0.pop()
 				y_ml[ele[1]]=0
 
-			while len(list_ymlP_1)>0.15*count_1:
+			while len(list_ymlP_1)>0.1*count_1:
 				
 				ele=list_ymlP_1.pop()
 				y_ml[ele[1]]=1
@@ -121,7 +122,7 @@ if __name__ == '__main__':
 
 			stop=time.time()
 			print(f"\n\n\tIt took: {stop-start}\n\tThe solution was {of_ml}")
-			
+			"""
 			#SAVING RESULTS
 			df=pd.DataFrame(columns=["Instance_name", "Time_MLHeu", "Of_MLHeu"])
 			df.loc[0,:]=[name_file,stop-start,of_ml]
@@ -130,6 +131,7 @@ if __name__ == '__main__':
 			writer.sheets = dict((ws.title, ws) for ws in writer.book.worksheets)
 			reader = pd.read_excel(RESULTS_PATH)
 			df.to_excel(writer,index=False,header=False,startrow=len(reader)+1)
+			"""
+			exit()
 			
-			
-		writer.close() 
+		#writer.close() 
