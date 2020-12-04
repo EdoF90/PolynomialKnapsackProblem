@@ -1,6 +1,7 @@
 from sklearn.neural_network import MLPClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
+from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import make_pipeline
@@ -18,7 +19,7 @@ classifiers = [
 	#SVC(kernel="linear", C=0.025),
 	#SVC(gamma=1, C=1, probability=True),
 	#GaussianProcessClassifier(1.0 * RBF(1.0)),
-	#DecisionTreeClassifier(max_depth=1),
+	DecisionTreeClassifier(criterion= 'entropy', min_samples_leaf= 30, min_samples_split= 10, splitter= 'random'),
 	RandomForestClassifier(n_estimators=100, min_samples_leaf=50, min_samples_split=2),
 	MLPClassifier(early_stopping=True, hidden_layer_sizes=200,learning_rate_init=0.001),
 	AdaBoostClassifier(n_estimators= 50),
@@ -27,15 +28,15 @@ classifiers = [
 	]
 
 
-names = ["Nearest Neighbors",
+names = ["KNN",
 	 	#"Linear SVM",
 	 	#"RBF SVM", #"Gaussian Process",
-		#"Decision Tree",
-		"Random Forest",
-		"Neural Net", 
-		"AdaBoost",
+		"DT",
+		"RF",
+		"NN", 
+		"AB",
 		#"Naive Bayes",
-		"LogisticRegression"
+		"LR"
 		]
 
 
@@ -65,13 +66,7 @@ accuracies80 = {}
 
 accuracies90 = {}
 
-accuracies20 = {}
-
-for name in names:
-	accuracies100[name] = []
-	accuracies80[name] = []
-	accuracies90[name] = []
-	accuracies20[name] = []
+accuracies85 = {}
 
 print("\tSTART PREDICTING")
 for name,clf in zip(names, classifiers):
@@ -83,11 +78,11 @@ for name,clf in zip(names, classifiers):
 	ypred0 = []
 	ypred1 = []
 	probs= clf.predict_proba(X_test)
-	classes= clf.predict(X_test)
+	#classes= clf.predict(X_test)
 
 	for it in range(len(probs)):
 		prob=probs[it]
-		class_assigned=classes[it]
+		#class_assigned=classes[it]
 		if prob[0]>0.5:
 			#print(f"Since the prob of 0 was {prob[0]} I assigned {class_assigned}")
 			ypred0.append((0,prob[0],int(y_test[it])))
@@ -101,62 +96,50 @@ for name,clf in zip(names, classifiers):
 	acc_1=np.sum([pred[0] == pred[2] for pred in ypred1])/len(ypred1)
 	acc_0=np.sum([pred[0] == pred[2] for pred in ypred0])/len(ypred0)
 
-	accuracies100[name].append(
-		(acc_1+acc_0)/2
-		)
+	accuracies100[name]=(acc_1+acc_0)/2
 
 	acc_1=np.sum([pred[0] == pred[2] for pred in ypred1[:int(len(ypred1)*0.8)]])/(len(ypred1)*0.8)
 	acc_0=np.sum([pred[0] == pred[2] for pred in ypred0[:int(len(ypred0)*0.8)]])/(len(ypred0)*0.8)
 
-	accuracies80[name].append(
-		(acc_1+acc_0)/2
-		)
+	accuracies80[name]=(acc_1+acc_0)/2
 
 	acc_1=np.sum([pred[0] == pred[2] for pred in ypred1[:int(len(ypred1)*0.9)]])/(len(ypred1)*0.9)
 	acc_0=np.sum([pred[0] == pred[2] for pred in ypred0[:int(len(ypred0)*0.9)]])/(len(ypred0)*0.9)
 
-	accuracies90[name].append(
-		(acc_1+acc_0)/2
-		)
+	accuracies90[name]=(acc_1+acc_0)/2
 
-	acc_1=np.sum([pred[0] == pred[2] for pred in ypred1[int(len(ypred1)*0.8):]])/(len(ypred1)*0.2)
-	acc_0=np.sum([pred[0] == pred[2] for pred in ypred0[int(len(ypred0)*0.8):]])/(len(ypred0)*0.2)
+	acc_1=np.sum([pred[0] == pred[2] for pred in ypred1[:int(len(ypred1)*0.85)]])/(len(ypred1)*0.85)
+	acc_0=np.sum([pred[0] == pred[2] for pred in ypred0[:int(len(ypred0)*0.85)]])/(len(ypred0)*0.85)
 
-	accuracies20[name].append(
-		(acc_1+acc_0)/2
-		)
+	accuracies85[name]=(acc_1+acc_0)/2
 
-
-#STATISTICS
-
-mean_accuracies_100 = []
-mean_accuracies_80 = []
-mean_accuracies_90 = []
-mean_accuracies_20 = []
-
-for name in names:
-	mean_accuracies_100.append(np.mean(accuracies100[name]))
-	mean_accuracies_80.append(np.mean(accuracies80[name]))
-	mean_accuracies_90.append(np.mean(accuracies90[name]))
-	mean_accuracies_20.append(np.mean(accuracies20[name]))
 
 #PLOT RESULTS
-fig, (ax1, ax2, ax3) = plt.subplots(3, 1)
-ax1.bar(names, mean_accuracies_100)
-ax1.grid()
-ax1.set_title("Accuracies on the 100 %")
-ax2.bar(names, mean_accuracies_80)
-ax2.grid()
-ax2.set_title("Accuracies on the 80 %")
+fig, axs = plt.subplots(2, 2)
+axs[0,0].bar(names, [el for el in accuracies100.values()])
+axs[0,0].grid()
+axs[0,0].set_title("Accuracies on the 100 %",fontsize=10)
+axs[0,0].set_ylim(0.928,0.98)
 
-ax3.bar(names, mean_accuracies_90)
-ax3.grid()
-ax3.set_title("Accuracies on the 90 %")
-"""
-ax3.bar(names, mean_accuracies_20)
-ax3.grid()
-ax3.set_title("Accuracies on the last 20 %")
-"""
+axs[0,1].bar(names, [el for el in accuracies90.values()])
+axs[0,1].grid()
+axs[0,1].set_title("Accuracies on the 90 %",fontsize=10)
+axs[0,1].set_ylim(0.928,0.98)
+
+axs[1,0].bar(names, [el for el in accuracies85.values()])
+axs[1,0].grid()
+axs[1,0].set_title("Accuracies on the 85 %",fontsize=10)
+axs[1,0].set_ylim(0.928,0.98)
+
+axs[1,1].bar(names, [el for el in accuracies80.values()])
+axs[1,1].grid()
+axs[1,1].set_title("Accuracies on the 80 %",fontsize=10)
+axs[1,1].set_ylim(0.928,0.98)
+
+for ax in axs.flat:
+	ax.tick_params(axis="x", labelsize=8)
+	ax.tick_params(axis="y", labelsize=8)
+
 #plt.savefig('Accuracy.png')
 plt.show()
 

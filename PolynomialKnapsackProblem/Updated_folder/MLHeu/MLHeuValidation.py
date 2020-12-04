@@ -25,7 +25,7 @@ classifiers = [
 	#SVC(kernel="linear", C=0.025),
 	SVC(gamma=1, C=1),
 	#GaussianProcessClassifier(1.0 * RBF(1.0)),
-	#DecisionTreeClassifier(max_depth=1),
+	DecisionTreeClassifier(criterion= 'entropy', min_samples_leaf= 30, min_samples_split= 10, splitter= 'random'),
 	RandomForestClassifier(n_estimators=100, min_samples_leaf=50, min_samples_split=2),
 	MLPClassifier(early_stopping=True, hidden_layer_sizes=200,learning_rate_init=0.001),
 	AdaBoostClassifier(n_estimators= 50),
