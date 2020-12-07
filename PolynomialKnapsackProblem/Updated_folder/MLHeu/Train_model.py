@@ -20,6 +20,6 @@ X = X.to_numpy()
 y = df['label']
 y=y.apply(lambda row: int(row)) 
 y=y.to_numpy()
-clf = make_pipeline(StandardScaler(), RandomForestClassifier(n_estimators=100, min_samples_leaf=50, min_samples_split=2))
+clf = make_pipeline(StandardScaler(), RandomForestClassifier(n_estimators=50, min_samples_leaf=30, min_samples_split=2))
 clf.fit(X, y)
 pickle.dump(clf, open(file_model, 'wb'))

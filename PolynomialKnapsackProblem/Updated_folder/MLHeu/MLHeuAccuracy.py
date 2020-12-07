@@ -20,9 +20,9 @@ classifiers = [
 	#SVC(gamma=1, C=1, probability=True),
 	#GaussianProcessClassifier(1.0 * RBF(1.0)),
 	DecisionTreeClassifier(criterion= 'entropy', min_samples_leaf= 30, min_samples_split= 10, splitter= 'random'),
-	RandomForestClassifier(n_estimators=100, min_samples_leaf=50, min_samples_split=2),
-	MLPClassifier(early_stopping=True, hidden_layer_sizes=200,learning_rate_init=0.001),
-	AdaBoostClassifier(n_estimators= 50),
+	RandomForestClassifier(n_estimators=50, min_samples_leaf=30, min_samples_split=2),
+	MLPClassifier(early_stopping=True, hidden_layer_sizes=100,learning_rate_init=0.1),
+	#AdaBoostClassifier(n_estimators= 50),
 	#GaussianNB(),
 	LogisticRegression()
 	]
@@ -34,7 +34,7 @@ names = ["KNN",
 		"DT",
 		"RF",
 		"NN", 
-		"AB",
+		#"AB",
 		#"Naive Bayes",
 		"LR"
 		]
