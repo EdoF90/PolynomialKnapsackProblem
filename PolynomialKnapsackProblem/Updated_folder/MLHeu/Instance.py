@@ -1,14 +1,25 @@
 import logging
 import numpy as np
-
+import random
+from DataCreatorNew import create_instances
 
 class Instance():
-    def __init__(self, sim_setting):
-        """[summary]
-        
+    def __init__(self, sim_setting = []):
+        """Class of the instance
+
         Arguments:
-            sim_setting {[type]} -- [description]
+            sim_setting {[type]} -- if the instance already exist, in sim_setting there are all the information
+
+        if the instance is new, sim_setting is empty and a new configuration file is created with a random number of item
+
         """
+
+        CONFIG_DIR="./config_final_3/"
+
+        if not sim_setting:
+            el=random.randint(100, 1500)
+            sim_setting = create_instances(CONFIG_DIR,el)
+            print(sim_setting)
         logging.info("starting simulation...")
         self.budget = sim_setting['budget']
         self.sizes = np.around(np.random.uniform(
@@ -23,10 +34,10 @@ class Instance():
 
 
     def get_data(self):
-        """[summary]
+        """
         
         Returns:
-            [type] -- [description]
+            A dictionary with all the information about the instance 
         """
         logging.info("getting data from instance...")
         return {
