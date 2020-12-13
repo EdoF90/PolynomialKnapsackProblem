@@ -1,3 +1,8 @@
+import numpy as np
+import random
+import json
+import math
+
 def countSynergies(item, polynomial_gains):
 	""" Count how many positive and negative synergies each item has
 	Args: 
@@ -11,7 +16,7 @@ def countSynergies(item, polynomial_gains):
 	negative_syn=0
 	for k_poly in polynomial_gains.keys():
 		if item in k_poly[1:-1].split(', '):        
-			if polynomial_gains[kp_oly]>0:
+			if polynomial_gains[k_poly]>0:
 				positive_syn+=1
 			else:
 				negative_syn+=1
@@ -20,7 +25,7 @@ def countSynergies(item, polynomial_gains):
 
 
 
-def prepare_set(N_ITEMS, N_FEATURES, dict_data):
+def prepare_set(N_ITEMS, N_FEATURES, dict_data, sol_cont):
 	""" Preparewhat we will pass to the ml 
 	Args: 
 		N_ITEMS : int, how many items are in this instance
@@ -59,23 +64,103 @@ def fix_variables(N_ITEMS, y_mlP, FIXED_PERCENTAGE):
 	for it in range(N_ITEMS):
 		if y_mlP[it][0]>0.5:
 			count_0+=1
-			list_ymlP_0.append((y_mlP[it][0],it))
+			list_ymlProb_0.append((y_mlP[it][0],it))
 		else:
 			count_1+=1
-			list_ymlP_1.append((y_mlP[it][1],it))
+			list_ymlProb_1.append((y_mlP[it][1],it))
 	#print(f"\nThe number of zero-one elements are: {count_0}-{count_1}")
 		
-	list_ymlP_0 = sorted(list_ymlP_0, key=lambda kv: kv[0], reverse=False)
-	list_ymlP_1 = sorted(list_ymlP_1, key=lambda kv: kv[0], reverse=False)
+	list_ymlProb_0 = sorted(list_ymlProb_0, key=lambda kv: kv[0], reverse=False)
+	list_ymlProb_1 = sorted(list_ymlProb_1, key=lambda kv: kv[0], reverse=False)
 
 
 	y_ml=np.ones(N_ITEMS)*(-1)   
-	while len(list_ymlP_0)>FIXED_PERCENTAGE*count_0:
-		ele=list_ymlP_0.pop()
+	while len(list_ymlProb_0)>FIXED_PERCENTAGE*count_0:
+		ele=list_ymlProb_0.pop()
 		y_ml[ele[1]]=0
-	while len(list_ymlP_1)>FIXED_PERCENTAGE*count_1:
+	while len(list_ymlProb_1)>FIXED_PERCENTAGE*count_1:
 				
-		ele=list_ymlP_1.pop()
+		ele=list_ymlProb_1.pop()
 		y_ml[ele[1]]=1
 
-return y_ml
+	return y_ml
+
+
+def create_instances(CONFIG_DIR, el):
+	""" create an instance for the problem, take as input how many items the inctance will have
+		save the instance in a file called with a speaking name about its composition
+	Args: 
+		CONFIG_DIR : folder where the instance will be salved
+		el: how many element the instance will have
+	Return: 
+		config: dictionary, with the properties of the instance :
+				n_items: int, given by input of the function 
+				gamma: int, taken from an uniform distribution
+				nominal cost: float, aken from an uniform distribution
+				upper cost: float, nominal cost multiplied by 1+something
+				profit: float, uniform with upper bound nominal cost multiplied by 0.8
+				polynomial gains: synergies between the items
+
+
+	"""
+	random.seed(44)
+	config = {}
+	#N_ITEM
+	config['n_items'] = int(el)
+	#GAMMA
+	config['gamma'] = int(random.uniform(0.2,0.6)*el)
+
+	matrix_costs = np.zeros((config['n_items'],2), dtype = float)
+
+	d = [0.3,0.6,0.9]
+	for i in range(config['n_items']):
+		matrix_costs[i,0] = random.uniform(1,50)
+		matrix_costs[i,1] =	(1+random.choice(d)) * matrix_costs[i,0]
+
+	array_profits = np.zeros((config['n_items']), dtype = float)
+
+	for i in range(config['n_items']):
+		array_profits[i] = random.uniform(0.8*np.max(matrix_costs[:,0]),100)	
+
+	m = [2,3,4]
+	config['budget'] = np.sum(matrix_costs[:,0])/random.choice(m)
+
+	items = list(range(config['n_items']))
+	polynomial_gains = {}
+
+	n_it=0
+
+	for i in range(2, config['n_items']):
+		if config['n_items']>1000:
+			for j in range(int(config['n_items']/2**((i-1)))):
+				n_it+=1
+				elem = str(tuple(np.random.choice(items, i, replace = False)))
+				polynomial_gains[elem] = random.uniform(1, 100/i)
+		elif config['n_items']<=1000 and config['n_items']>300:
+			for j in range(int(config['n_items']/2**(math.sqrt(i-1)))):
+				n_it+=1
+				elem = str(tuple(np.random.choice(items, i, replace = False)))
+				polynomial_gains[elem] = random.uniform(1, 100/i)
+		else:		
+			for j in range(int(config['n_items']/(i-1))):
+				n_it+=1
+				elem = str(tuple(np.random.choice(items, i, replace = False)))
+				polynomial_gains[elem] = random.uniform(1, 100/i)
+		#print("We had {} iterations".format(n_it))
+	array_profits = list(array_profits)
+	matrix_costs = matrix_costs.reshape(config['n_items'],2)
+	matrix_costs = matrix_costs.tolist()
+	config['profits'] = array_profits
+	config['costs'] = matrix_costs
+
+	config['polynomial_gains'] = polynomial_gains	
+
+	if config['n_items'] > 1000:
+		namefile = CONFIG_DIR+"E_{}_{}_{}.json".format(config['n_items'],config['gamma'],round(config['budget'],3))
+	elif config['n_items'] > 300 and config['n_items']<=1000:
+		namefile = CONFIG_DIR+"S_{}_{}_{}.json".format(config['n_items'],config['gamma'],round(config['budget'],3))
+	else:
+		namefile = CONFIG_DIR+"L_{}_{}_{}.json".format(config['n_items'],config['gamma'],round(config['budget'],3))
+	with open(namefile,'w') as f:
+		json.dump(config, f, indent=4)
+	return config

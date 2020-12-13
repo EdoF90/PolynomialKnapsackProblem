@@ -20,7 +20,7 @@ if __name__ == '__main__':
 	)
 
 	file_model = './model_data/finalized_model_rTrees.sav'
-	CONFIG_PATH = "./config_2/"
+	CONFIG_PATH = "./config/"
 	N_FEATURES = 6
 	FIXED_PERCENTAGE = 0.85
 	list_of_files = os.listdir(CONFIG_PATH)
