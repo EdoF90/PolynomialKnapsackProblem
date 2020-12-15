@@ -5,6 +5,14 @@ from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestClassifier
 
+""" 
+The real train over the train dataset we have
+input: 
+		train set
+output: 
+	model classifier
+"""
+
 file_path = "./model_data/train.csv"
 file_model = './model_data/finalized_model_rTrees.sav'
 

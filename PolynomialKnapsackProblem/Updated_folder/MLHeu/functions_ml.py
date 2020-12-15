@@ -3,6 +3,49 @@ import random
 import json
 import math
 
+
+
+def classifier_set(tuning=False):
+	""" prepare the lists of classifiers and relative names we will evaluate 
+	Args: 
+		none
+	Return: 
+		classifiers: list of classifiers
+		names: list of the name of the classifier
+	"""
+	if tuning==False:
+		classifiers = [
+			KNeighborsClassifier(50),
+			SVC(kernel="linear", C=0.025, probability=True),
+			SVC(gamma=1, C=1, probability=True),
+			GaussianProcessClassifier(1.0 * RBF(1.0)),
+			DecisionTreeClassifier(criterion= 'entropy', min_samples_leaf= 30, min_samples_split= 10, splitter= 'random'),
+			RandomForestClassifier(n_estimators=50, min_samples_leaf=30, min_samples_split=2),
+			MLPClassifier(early_stopping=True, hidden_layer_sizes=100,learning_rate_init=0.1),
+			AdaBoostClassifier(n_estimators= 50),
+			GaussianNB(),
+			LogisticRegression()
+			]
+
+
+		names = ["KNN",
+			 	"L SVM",
+			 	"RBF SVM", 
+			 	"GP",
+				"DT",
+				"RF",
+				"NN", 
+				"AB",
+				"NB",
+				"LR"
+				]
+
+	return classifiers, names
+
+
+
+
+
 def countSynergies(item, polynomial_gains):
 	""" Count how many positive and negative synergies each item has
 	Args: 

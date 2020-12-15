@@ -11,37 +11,19 @@ from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import cross_val_score
-
 import numpy as np
 import pandas as pd
-from Instance import  Instance
 from solver.solve_polynomial_knapsack import solve_polynomial_knapsack
 import json
 import matplotlib.pyplot as plt
+from functions_ml import classifier_set
 
+""" 
+Validation of the classifier over the train set
 
-classifiers = [
-	KNeighborsClassifier(50),
-	#SVC(kernel="linear", C=0.025),
-	SVC(gamma=1, C=1),
-	#GaussianProcessClassifier(1.0 * RBF(1.0)),
-	DecisionTreeClassifier(criterion= 'entropy', min_samples_leaf= 30, min_samples_split= 10, splitter= 'random'),
-	RandomForestClassifier(n_estimators=100, min_samples_leaf=50, min_samples_split=2),
-	MLPClassifier(early_stopping=True, hidden_layer_sizes=200,learning_rate_init=0.001),
-	AdaBoostClassifier(n_estimators= 50),
-	#GaussianNB(),
-	LogisticRegression()]
+"""
 
-
-names = ["Nearest Neighbors",
-	 	#"Linear SVM",
-	 	"RBF SVM", #"Gaussian Process",
-		#"Decision Tree",
-		"Random Forest",
-		"Neural Net", 
-		"AdaBoost",
-		#"Naive Bayes",
-		"LogisticRegression"]
+classifiers, names = classifier_set()
 
 df =  pd.read_csv('model_data/train.csv', header = 0)
 df = df._get_numeric_data()

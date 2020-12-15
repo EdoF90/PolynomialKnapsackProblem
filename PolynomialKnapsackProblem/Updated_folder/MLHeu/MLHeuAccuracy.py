@@ -12,46 +12,27 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 import numpy as np
 import pandas as pd
-from Instance import  Instance
 from solve_polynomial_knapsack import solve_polynomial_knapsack
 import json
 import matplotlib.pyplot as plt
+from functions_ml import classifier_set
 
 """ 
 In order to select the classifier that better fit our problem
 and in the meanwhile the quantity of item to fix in heuristic
 
-The train set is already present
+The train set train.csv is already present
+
+The output is a plot with four subplot beacause four different percentuage 
+of the total number of items for each instance are tested.
+In each subplot there are all the classifier we tested.
+The best one is chosen with these plots.
 
 """
 
 
 
-classifiers = [
-	KNeighborsClassifier(50),
-	SVC(kernel="linear", C=0.025),
-	SVC(gamma=1, C=1, probability=True),
-	GaussianProcessClassifier(1.0 * RBF(1.0)),
-	DecisionTreeClassifier(criterion= 'entropy', min_samples_leaf= 30, min_samples_split= 10, splitter= 'random'),
-	RandomForestClassifier(n_estimators=50, min_samples_leaf=30, min_samples_split=2),
-	MLPClassifier(early_stopping=True, hidden_layer_sizes=100,learning_rate_init=0.1),
-	AdaBoostClassifier(n_estimators= 50),
-	GaussianNB(),
-	LogisticRegression()
-	]
-
-
-names = ["KNN",
-	 	"Linear SVM",
-	 	"RBF SVM", 
-	 	"Gaussian Process",
-		"DT",
-		"RF",
-		"NN", 
-		"AB",
-		"Naive Bayes",
-		"LR"
-		]
+classifiers, names = classifier_set()
 
 
 df =  pd.read_csv('model_data/train.csv', header = 0)
@@ -75,11 +56,12 @@ for name, clf in zip(names, classifiers):
 	pipe.fit(X_train,y_train)
 	print(f"{name} trained")
 
-accuracies = {}
 percentuages= [1, 0.8, 0.9, 0.85]
+accuracies = np.zeros((len(percentuages),len(names)))
 
 print("\tSTART PREDICTING")
-for name,clf in zip(names, classifiers):
+ind=0
+for  name,clf in zip(names, classifiers):
 	print(f"\t\t{name}")
 	scaler=StandardScaler()
 	scaler.fit(X_test)
@@ -88,11 +70,9 @@ for name,clf in zip(names, classifiers):
 	ypred0 = []
 	ypred1 = []
 	probs= clf.predict_proba(X_test)
-	#classes= clf.predict(X_test)
 
 	for it in range(len(probs)):
 		prob=probs[it]
-		#class_assigned=classes[it]
 		if prob[0]>0.5:
 			#print(f"Since the prob of 0 was {prob[0]} I assigned {class_assigned}")
 			ypred0.append((0,prob[0],int(y_test[it])))
@@ -103,34 +83,31 @@ for name,clf in zip(names, classifiers):
 	ypred1.sort(key=lambda el: el[1], reverse=True)
 	ypred0.sort(key=lambda el: el[1], reverse=True)
 
-	for p in percentuages:
+	for en, p in enumerate(percentuages):
 		acc_1=np.sum([pred[0] == pred[2] for pred in ypred1[:int(len(ypred1)*0.8)]])/(len(ypred1)*p)
 		acc_0=np.sum([pred[0] == pred[2] for pred in ypred0[:int(len(ypred0)*0.8)]])/(len(ypred0)*p)
-		percentuage_str=str(p)
-		accuracies[p][name]=(acc_1+acc_0)/2
-		print(p,name)
-		print(accuracies[p][name])
-
-
+		accuracies[en][ind] = (acc_1+acc_0)/2
+	ind+=1
 
 #plot the results :  accuracies of the classifiers and percentuage fixed 
-
-fig, axs = plt.subplots(2, 2)
+fig ,axs= plt.subplots(2,2)
 
 counter=0
 for dx in range(2):
 	for sx in range(2):
-		p= int(percentuage[counter])*100
-		print(accuracies[p])
-		axs[dx,sx].bar(names, [el for el in accuracies[p].values()])
-		axs[dx,sx].grid()
-		axs[dx,sx].set_title("Accuracies on the {p} %",fontsize=10)
-		axs[dx,sx].set_ylim(0.928,0.98)
-		counter+=1
+		print(dx,sx)
+		ax=axs[dx,sx]
+		p= percentuages[counter]*100
 
-for ax in axs.flat:
-	ax.tick_params(axis="x", labelsize=8)
-	ax.tick_params(axis="y", labelsize=8)
+		ax.bar(names, [el for el in accuracies[counter]])
+		print(p,counter)
+		print(accuracies[counter])
+		ax.grid()
+		ax.tick_params(axis="x", labelsize=6, rotation=45)
+		ax.tick_params(axis="y", labelsize=8)
+		ax.set_title(f"Accuracies on the {p} %",fontsize=10)
+		ax.set_ylim(0.9,0.98)
+		counter+=1
 
 #plt.savefig('Accuracy.png')
 plt.show()

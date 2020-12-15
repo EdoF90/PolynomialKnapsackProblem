@@ -1,11 +1,22 @@
 import os
-from solve_polynomial_knapsack import solve_polynomial_knapsack
+from solver.solve_polynomial_knapsack import solve_polynomial_knapsack
 from functions_ml import countSynergies, create_instances
 import random 
 import math
 
+
+""" 
+Create the training set for the classification or append new lines of instances
+
+N_INSTANCES is the number of instances to add at the train set
+
+The output is the training file train.csv, which will be used in Train_model.py
+
+"""
+
+
 # how many instances we will add at the training set in this run, this can be changed
-N_INSTANCES = 3
+N_INSTANCES = 20
 
 # the chosen features are : (1) the countinuos solution of the item
 # (2) the profif it would bring to the solution
