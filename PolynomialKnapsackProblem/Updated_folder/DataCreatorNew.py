@@ -17,20 +17,17 @@ for i in range(n_times):
 		config['n_items'] = int(el)
 		#GAMMA
 		config['gamma'] = int(random.uniform(0.2,0.6)*el)
-
+		#COSTS
 		matrix_costs = np.zeros((config['n_items'],2), dtype = float)
-
 		d = [0.3,0.6,0.9]
 		for i in range(config['n_items']):
 			matrix_costs[i,0] = random.uniform(1,50)
 			matrix_costs[i,1] =	(1+random.choice(d)) * matrix_costs[i,0]
-
+		
 		array_profits = np.zeros((config['n_items']), dtype = float)
-
-		#SCRIVERE NEL REPORT; GRUOBI CI PERDE PERò POI CI GUADAGNA
 		for i in range(config['n_items']):
 			array_profits[i] = random.uniform(0.8*np.max(matrix_costs[:,0]),100)	
-
+		
 		m = [2,3,4]
 		config['budget'] = np.sum(matrix_costs[:,0])/random.choice(m)
 
@@ -56,17 +53,18 @@ for i in range(n_times):
 					elem = str(tuple(np.random.choice(items, i, replace = False)))
 					polynomial_gains[elem] = random.uniform(1, 100/i)
 
-		#print("We had {} iterations".format(n_it))
-
-		#array_profits = array_profits.reshape(1,config['n_items'])
 		array_profits = list(array_profits)
 		matrix_costs = matrix_costs.reshape(config['n_items'],2)
 		matrix_costs = matrix_costs.tolist()
+		
+		#PROFITS
 		config['profits'] = array_profits
+		#COSTS
 		config['costs'] = matrix_costs
-
+		#GAINS
 		config['polynomial_gains'] = polynomial_gains	
-
+		
+		#SAVE THE FILE
 		if config['n_items'] > 1000:
 			namefile = CONFIG_DIR+"E_{}_{}_{}.json".format(config['n_items'],config['gamma'],round(config['budget'],3))
 		elif config['n_items'] > 300 and config['n_items']<=1000:

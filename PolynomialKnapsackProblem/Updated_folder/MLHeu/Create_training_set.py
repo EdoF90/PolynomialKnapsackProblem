@@ -7,13 +7,9 @@ import math
 
 """ 
 Create the training set for the classification or append new lines of instances
-
 N_INSTANCES is the number of instances to add at the train set
-
 The output is the training file train.csv, which will be used in Train_model.py
-
 """
-
 
 # how many instances we will add at the training set in this run, this can be changed
 N_INSTANCES = 20
@@ -29,15 +25,9 @@ file_path = "./model_data/train.csv"
 
 # if the train is not present at all we will create it, else the new lines will be appended to the exist one
 if os.path.isfile(file_path):
-	file_output = open(
-		file_path,
-		"a"
-	)
+	file_output = open(file_path, "a")
 else:
-	file_output = open(
-		file_path,
-		"w"
-	)
+	file_output = open(file_path, "w")
 	file_output.write("instance,relax,profit,nominalC,upperC,PosSinCount,NegSinCount,label,\n")
 
 for n_instance in range(N_INSTANCES):
@@ -48,11 +38,11 @@ for n_instance in range(N_INSTANCES):
 
 	# solve the model
 	var_type = 'discrete'
-	of, sol, comp_time = solve_polynomial_knapsack(dict_data, var_type,False,[])
+	of, sol, comp_time = solve_polynomial_knapsack(dict_data, var_type, False, [])
 
 	#solve the continuos relaxation
 	var_type = 'continuous'
-	of, sol_cont, comp_time = solve_polynomial_knapsack(dict_data, var_type,False,[])
+	of, sol_cont, comp_time = solve_polynomial_knapsack(dict_data, var_type, False, [])
 
 	# create new lines of the training file
 	for i in range(dict_data['n_items']):

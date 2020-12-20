@@ -1,5 +1,3 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
 import logging
 import numpy as np
 import json
@@ -78,9 +76,5 @@ if __name__ == '__main__':
 
 		gamma_list.append(gamma)
 		n_items_list.append(n_items)
-		#sollist.append(str(sol2))
-		#print(str(objfun).replace('.',','))
-		#print(str(round(comp_time,3)).replace('.',','))
 		with open(OUTPUT_FOLDER, 'a+') as f:
 			f.write('{},{},{}\n'.format(name_file,objfun,round(comp_time,3)))
-

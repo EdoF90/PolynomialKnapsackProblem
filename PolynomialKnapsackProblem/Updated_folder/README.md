@@ -5,7 +5,7 @@ At the moment it contains:
 ### polynomial_knapsack.py:
 script to launch the model (call functions of sub-folder 'solver' and generate an instance through 'Instance.py'; needs also the 'logs' folder to output logs.). At the moment is appending results on a txt file (Results/Model_results); CHECK BEFORE RUNNING!
 
-### GAHeuristic.py:
+### GAHeuristic.py and main_GA.py:
 the genetic heuristic. At the moment is appending results on a txt file; it requires as input both the input-folder (config) and the output one -> CHECK BEFORE RUNNING!
 
 ### DataCreatorNew.py:

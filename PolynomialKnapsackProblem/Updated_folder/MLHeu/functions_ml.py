@@ -4,7 +4,6 @@ import json
 import math
 
 
-
 def classifier_set(tuning=False):
 	""" prepare the lists of classifiers and relative names we will evaluate 
 	Args: 
@@ -26,8 +25,6 @@ def classifier_set(tuning=False):
 			GaussianNB(),
 			LogisticRegression()
 			]
-
-
 		names = ["KNN",
 			 	"L SVM",
 			 	"RBF SVM", 
@@ -39,11 +36,7 @@ def classifier_set(tuning=False):
 				"NB",
 				"LR"
 				]
-
 	return classifiers, names
-
-
-
 
 
 def countSynergies(item, polynomial_gains):
@@ -64,8 +57,6 @@ def countSynergies(item, polynomial_gains):
 			else:
 				negative_syn+=1
 		return (positive_syn, negative_syn)
-
-
 
 
 def prepare_set(N_ITEMS, N_FEATURES, dict_data, sol_cont):
@@ -98,7 +89,6 @@ def fix_variables(N_ITEMS, y_mlP, FIXED_PERCENTAGE):
 		y_ml : list which has -1 where the constrint will not be setted, 
 						1 if we want to include the item in the solution
 						0 if we do not want the item in the solution
-
 	"""
 	list_ymlProb_0 = list() 
 	count_0 = 0
@@ -111,18 +101,16 @@ def fix_variables(N_ITEMS, y_mlP, FIXED_PERCENTAGE):
 		else:
 			count_1+=1
 			list_ymlProb_1.append((y_mlP[it][1],it))
-	#print(f"\nThe number of zero-one elements are: {count_0}-{count_1}")
 		
 	list_ymlProb_0 = sorted(list_ymlProb_0, key=lambda kv: kv[0], reverse=False)
 	list_ymlProb_1 = sorted(list_ymlProb_1, key=lambda kv: kv[0], reverse=False)
-
 
 	y_ml=np.ones(N_ITEMS)*(-1)   
 	while len(list_ymlProb_0)>FIXED_PERCENTAGE*count_0:
 		ele=list_ymlProb_0.pop()
 		y_ml[ele[1]]=0
-	while len(list_ymlProb_1)>FIXED_PERCENTAGE*count_1:
-				
+	
+	while len(list_ymlProb_1)>FIXED_PERCENTAGE*count_1:	
 		ele=list_ymlProb_1.pop()
 		y_ml[ele[1]]=1
 
@@ -143,8 +131,6 @@ def create_instances(CONFIG_DIR, el):
 				upper cost: float, nominal cost multiplied by 1+something
 				profit: float, uniform with upper bound nominal cost multiplied by 0.8
 				polynomial gains: synergies between the items
-
-
 	"""
 	random.seed(44)
 	config = {}
@@ -189,7 +175,6 @@ def create_instances(CONFIG_DIR, el):
 				n_it+=1
 				elem = str(tuple(np.random.choice(items, i, replace = False)))
 				polynomial_gains[elem] = random.uniform(1, 100/i)
-		#print("We had {} iterations".format(n_it))
 	array_profits = list(array_profits)
 	matrix_costs = matrix_costs.reshape(config['n_items'],2)
 	matrix_costs = matrix_costs.tolist()

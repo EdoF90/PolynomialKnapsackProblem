@@ -20,7 +20,6 @@ from functions_ml import classifier_set
 
 """ 
 Validation of the classifier over the train set
-
 """
 
 classifiers, names = classifier_set()
@@ -36,7 +35,7 @@ y = df['label']
 y=y.apply(lambda row: int(row)) 
 y=y.to_numpy()
 
-print("START TRAINING OVER CLASSIFIER!\n")
+# START TRAINING OVER CLASSIFIER!
 accuracies = {}
 mean_accuracies = []
 
@@ -55,5 +54,3 @@ plt.title("Total Accuracies")
 plt.ylim(0.9)
 plt.savefig('Accuracy.png')
 plt.show()
-
-

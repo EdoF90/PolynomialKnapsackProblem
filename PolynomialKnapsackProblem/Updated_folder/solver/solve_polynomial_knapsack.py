@@ -2,9 +2,7 @@ import time
 import logging
 from gurobipy import *
 
-def solve_polynomial_knapsack(
-    dict_data, var_type, heuristic, indexes, gap=None, time_limit=None, verbose=False
-):
+def solve_polynomial_knapsack(dict_data, var_type, heuristic, indexes, gap=None, time_limit=None, verbose=False):
     n_items = len(dict_data['costs'])
     items = range(dict_data['n_items'])
     n_hog = len(dict_data['polynomial_gains'])
@@ -48,11 +46,9 @@ def solve_polynomial_knapsack(
     #OBJECTIVE FUNCTION
     obj_funct = quicksum(dict_data['profits'][i] * X[i] for i in items)
     for h, key in enumerate(dict_data['polynomial_gains']):
-        #print('h:',h,' key:',key)
         obj_funct += dict_data['polynomial_gains'][key] * Z[h]
     obj_funct -= quicksum(dict_data['costs'][i][0] * X[i] for i in items)
     obj_funct -= (dict_data['gamma']*Rho + quicksum(Pi[i] for i in items))
-    
     model.setObjective(obj_funct, GRB.MAXIMIZE)
 
     #CONSTRAINS
@@ -101,7 +97,6 @@ def solve_polynomial_knapsack(
     else:
         model.setParam('OutputFlag', 0)
     model.setParam('LogFile', './logs/gurobi.log')
-    # model.write("./logs/model.lp")
     start = time.time()
     model.optimize()
     end = time.time()
